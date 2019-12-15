@@ -1,10 +1,20 @@
+// Demo server app - developed for Gamification demo .... 
+// This will expose some sample APIs via REST to call product database 
+
+// import express module - web app server
+// import body-parser extracts the entire body portion of an incoming request stream and exposes it on req.body as something easier to interact with
+// import mysql modeule to connect to mysql
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mysql = require("mysql");
+
+// set port
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
+// we will use JSON
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -17,42 +27,38 @@ app.get('/', function (req, res) {
 });
 
 
-//mysql configuration
-//var mysqlHost = process.env.OPENSHIFT_MYSQL_DB_HOST || 'mysql.database-check.svc.cluster.local';
-//var mysqlHost = process.env.OPENSHIFT_MYSQL_DB_HOST || 'mysql.gamification.svc.cluster.local';
+//mysql configuration - Gamification project mysql connect details
 var mysqlHost = process.env.OPENSHIFT_MYSQL_DB_HOST || 'custom-mysql.gamification.svc.cluster.local';
-
 var mysqlPort = process.env.OPENSHIFT_MYSQL_DB_PORT || 3306;
-//var mysqlUser = 'ccuser'; //mysql username
-var mysqlUser = 'xxuser'; //mysql username
-var mysqlPass = 'welcome1'; //mysql password
-//var mysqlDb = 'productdb'; //mysql database name
+var mysqlUser = 'xxuser'; 
+var mysqlPass = 'welcome1';
 
+// we will use sampledb as database
 var mysqlDb = 'sampledb';
 
-//connection strings
+//form the connection string to connect to mysql - you can connect directly too 
 var mysqlString = 'mysql://' + mysqlUser + ':' + mysqlPass + '@' + mysqlHost + ':' + mysqlPort + '/' + mysqlDb;
 
 
-//connect to mysql
+//connect to mysql/sampledb database
 var mysqlClient = mysql.createConnection(mysqlString);
 mysqlClient.connect(function (err) {
     if (err) console.log(err);
 });
 
-//MySQL is running!
-app.get('/mysql', function (req, res) {
-    mysqlClient.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
+//GET DB STATUS - To validate if database is running call this API ... URL/isdbon
+app.get('/isdbon', function (req, res) {
+    mysqlClient.query('SELECT 0 + 0 AS status', function (err, rows, fields) {
         if (err) {
-            res.send('NOT OK' + JSON.stringify(err));
+            res.send('MYSQL IS NOT CONNECTED' + JSON.stringify(err));
         } else {
-            res.send('OK: ' + rows[0].solution);
+            res.send('MYSQL IS CONNECTED - Status Msg: ' + rows[0].status);
         }
     });
 });
 
-//show all products, search products based on description
-app.get('/api/products',(req, res) => {
+//GET ALL PRODUCTS - To retrieve all all products call this API ... URL/api/allproducts
+app.get('/api/allproducts',(req, res) => {
 let sql = "SELECT * FROM XXIBM_PRODUCT_SKU";  
 
 if(req.query.desc != undefined)
@@ -67,8 +73,8 @@ console.log(sql);
   });
 });
 
-//show single product
-app.get('/api/products/:id',(req, res) => {
+//GET A PRODUCT by PRODUCT_ID ... To retrieve all all products call this API ... URL/api/allproducts/'Product_id'
+app.get('/api/allproducts/:id',(req, res) => {
   let sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE ITEM_NUMBER="+req.params.id;
   console.log(sql);
   let query = mysqlClient.query(sql, (err, results) => {
