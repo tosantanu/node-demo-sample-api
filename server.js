@@ -38,6 +38,7 @@ var mysqlDb = 'sampledb';
 
 //form the connection string to connect to mysql - you can connect directly too 
 var mysqlString = 'mysql://' + mysqlUser + ':' + mysqlPass + '@' + mysqlHost + ':' + mysqlPort + '/' + mysqlDb;
+console.log(mysqlString);
 
 
 //connect to mysql/sampledb database
