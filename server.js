@@ -68,7 +68,7 @@ console.log(sql);
 });
 
 //GET A PRODUCT by DESCRIPTION ... To retrieve all all products call this API ... URL/api/getproducts/'Description'
-app.get('/api/getproducts/:desc',(req, res) => {
+app.get('/api/getproducts/desc/:desc',(req, res) => {
   let sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE DESCRIPTION LIKE '"+ req.params.id + "%'";
   console.log(sql);
   let query = mysqlClient.query(sql, (err, results) => {
@@ -78,7 +78,7 @@ app.get('/api/getproducts/:desc',(req, res) => {
 });
 
 //GET A PRODUCT by PRODUCT_ID ... To retrieve all all products call this API ... URL/api/getproducts/'Product_id'
-app.get('/api/getproducts/:id',(req, res) => {
+app.get('/api/getproducts/id/:id',(req, res) => {
   let sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE ITEM_NUMBER="+req.params.id;
   console.log(sql);
   let query = mysqlClient.query(sql, (err, results) => {
