@@ -47,7 +47,7 @@ mysqlClient.connect(function (err) {
 });
 
 //GET DB STATUS - To validate if database is running call this API ... URL/isdbon
-app.get('/isdbon', function (req, res) {
+app.get('/api/status/db', function (req, res) {
     mysqlClient.query('SELECT 0 + 0 AS status', function (err, rows, fields) {
         if (err) {
             res.send('MYSQL IS NOT CONNECTED' + JSON.stringify(err));
@@ -57,24 +57,28 @@ app.get('/isdbon', function (req, res) {
     });
 });
 
-//GET ALL PRODUCTS - To retrieve all all products call this API ... URL/api/allproducts
-app.get('/api/allproducts',(req, res) => {
+//GET ALL PRODUCTS - To retrieve all all products call this API ... URL/api/getproducts
+app.get('/api/getproducts',(req, res) => {
 let sql = "SELECT * FROM XXIBM_PRODUCT_SKU";  
-
-if(req.query.desc != undefined)
-{
-	sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE DESCRIPTION LIKE '"+ req.query.desc + "%'";
-}
 console.log(sql);
-
   let query = mysqlClient.query(sql, (err, results) => {
     if(err) throw err;
     res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
   });
 });
 
-//GET A PRODUCT by PRODUCT_ID ... To retrieve all all products call this API ... URL/api/allproducts/'Product_id'
-app.get('/api/allproducts/:id',(req, res) => {
+//GET A PRODUCT by DESCRIPTION ... To retrieve all all products call this API ... URL/api/getproducts/'Description'
+app.get('/api/getproducts/:desc',(req, res) => {
+  let sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE DESCRIPTION LIKE '"+ req.params.id + "%'";
+  console.log(sql);
+  let query = mysqlClient.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  });
+});
+
+//GET A PRODUCT by PRODUCT_ID ... To retrieve all all products call this API ... URL/api/getproducts/'Product_id'
+app.get('/api/getproducts/:id',(req, res) => {
   let sql = "SELECT * FROM XXIBM_PRODUCT_SKU WHERE ITEM_NUMBER="+req.params.id;
   console.log(sql);
   let query = mysqlClient.query(sql, (err, results) => {
