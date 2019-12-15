@@ -87,6 +87,15 @@ app.get('/api/getproducts/id/:id',(req, res) => {
   });
 });
 
+//GET PRODUCT PRICE by PRODUCT_ID ... To retrieve product price call this API ... URL/api/getproducts/price/'Product_id'
+app.get('/api/getproducts/id/price/:id',(req, res) => {
+  let sql = "SELECT * FROM XXIBM_PRODUCT_PRICING WHERE ITEM_NUMBER="+req.params.id;
+  console.log(sql);
+  let query = mysqlClient.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+  });
+});
 
 // set port
 app.listen(port, ip);
